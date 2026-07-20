@@ -21,17 +21,36 @@ Facebookにアップロードされている動画を、URLを指定するだけ
 ターミナル(Windowsなら「コマンドプロンプト」または「PowerShell」)で以下を実行:
 
 ```bash
-# yt-dlp のインストール
-pip3 install yt-dlp
+# Mac (Homebrew) — pip3ではなくbrewでまとめて入れるのが確実です
+brew install yt-dlp ffmpeg
 
-# ffmpeg のインストール
-# Mac (Homebrew):
-brew install ffmpeg
-# Windows (winget):
-winget install ffmpeg
-# Ubuntu/Debian:
+# Windows (winget)
+winget install yt-dlp ffmpeg
+
+# Ubuntu/Debian
+pip3 install yt-dlp
 sudo apt install ffmpeg
 ```
+
+> **Macで `pip3 install yt-dlp` が `error: externally-managed-environment` で失敗する場合**:
+> HomebrewのPythonはpipでの直接インストールを制限しています。上記のとおり `brew install yt-dlp` を使ってください。
+
+### スクリプトなしで使う(最も手軽)
+
+yt-dlpをインストールすれば、実はこのスクリプトなしでもコマンド1行でダウンロードできます:
+
+```bash
+# 公開動画(現在のフォルダに保存)
+yt-dlp "動画のURL"
+
+# 保存先を指定(例: デスクトップ)
+yt-dlp -P ~/Desktop "動画のURL"
+
+# 非公開・グループ限定動画(ログイン中のブラウザを指定)
+yt-dlp --cookies-from-browser chrome "動画のURL"
+```
+
+本スクリプト(`fb_download.py`)は、上記のオプションを覚えなくても使えるようにした簡易ラッパーです。
 
 ---
 
