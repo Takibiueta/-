@@ -1,2 +1,3 @@
 # pip3 install -r requirements.txt でまとめてインストールできます
-yt-dlp>=2025.1.1
+# curl-cffi はFacebookのbot対策を回避するブラウザ偽装(impersonation)に必要です
+yt-dlp[default,curl-cffi]>=2025.1.1

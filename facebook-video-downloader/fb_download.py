@@ -30,6 +30,20 @@ except ImportError:
     sys.exit(1)
 
 
+def impersonate_target():
+    """ブラウザ偽装(impersonation)が利用可能ならChromeのターゲットを返す。
+
+    最近のFacebookはbot対策が強く、偽装なしだと「Cannot parse data」で
+    失敗することが多いため、利用可能なら常に有効にする。
+    """
+    try:
+        import curl_cffi  # noqa: F401
+        from yt_dlp.networking.impersonate import ImpersonateTarget
+        return ImpersonateTarget.from_str("chrome")
+    except Exception:
+        return None
+
+
 def build_options(args: argparse.Namespace) -> dict:
     """コマンドライン引数から yt-dlp のオプションを組み立てる。"""
     outdir = Path(args.output).expanduser()
@@ -46,6 +60,18 @@ def build_options(args: argparse.Namespace) -> dict:
         # 既に同じ動画をダウンロード済みならスキップ
         "overwrites": False,
     }
+
+    target = impersonate_target()
+    if target is not None:
+        opts["impersonate"] = target
+    else:
+        print(
+            "注意: ブラウザ偽装(curl_cffi)が利用できません。"
+            "Facebookのbot対策で「Cannot parse data」エラーが出る場合は\n"
+            '    pipx install "yt-dlp[default,curl-cffi]"\n'
+            "でインストールし直してください。",
+            file=sys.stderr,
+        )
 
     if args.browser:
         # ブラウザのCookie(ログイン情報)を使う → 非公開動画に対応
@@ -121,6 +147,18 @@ def main() -> int:
                         "--browser chrome のようにログイン中のブラウザを指定してみてください。",
                         file=sys.stderr,
                     )
+                elif "cannot parse data" in msg.lower():
+                    hints = ["ヒント: 「Cannot parse data」の主な原因と対処:"]
+                    if not args.browser and not args.cookies:
+                        hints.append(
+                            "  1. ログインが必要な動画かもしれません → --browser chrome を付けて再実行"
+                        )
+                    if impersonate_target() is None:
+                        hints.append(
+                            "  2. Facebookのbot対策の可能性 → pipx install \"yt-dlp[default,curl-cffi]\" "
+                            "で偽装機能付きのyt-dlpを入れて再実行"
+                        )
+                    print("\n".join(hints), file=sys.stderr)
                 failed.append(url)
 
     if not args.list_formats:

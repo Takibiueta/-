@@ -21,19 +21,25 @@ Facebookにアップロードされている動画を、URLを指定するだけ
 ターミナル(Windowsなら「コマンドプロンプト」または「PowerShell」)で以下を実行:
 
 ```bash
-# Mac (Homebrew) — pip3ではなくbrewでまとめて入れるのが確実です
-brew install yt-dlp ffmpeg
+# Mac — pipxで「ブラウザ偽装機能付き」のyt-dlpを入れるのが確実です
+#(brew install yt-dlp でも入りますが、偽装機能がなくFacebookで失敗しやすい)
+brew install pipx ffmpeg
+pipx install "yt-dlp[default,curl-cffi]"
+pipx ensurepath   # 実行後、ターミナルを開き直す
 
 # Windows (winget)
 winget install yt-dlp ffmpeg
 
 # Ubuntu/Debian
-pip3 install yt-dlp
+pip3 install "yt-dlp[default,curl-cffi]"
 sudo apt install ffmpeg
 ```
 
+> **重要**: 最近のFacebookはbot対策が強く、通常のyt-dlpだと `Cannot parse data` エラーで失敗します。
+> `[default,curl-cffi]` 付きでインストールすると「ブラウザ偽装(impersonation)」が使えるようになり、これを回避できます。
+>
 > **Macで `pip3 install yt-dlp` が `error: externally-managed-environment` で失敗する場合**:
-> HomebrewのPythonはpipでの直接インストールを制限しています。上記のとおり `brew install yt-dlp` を使ってください。
+> HomebrewのPythonはpipでの直接インストールを制限しています。上記のとおりpipx経由でインストールしてください。
 
 ### スクリプトなしで使う(最も手軽)
 
@@ -41,13 +47,13 @@ yt-dlpをインストールすれば、実はこのスクリプトなしでも�
 
 ```bash
 # 公開動画(現在のフォルダに保存)
-yt-dlp "動画のURL"
+yt-dlp --impersonate chrome "動画のURL"
 
 # 保存先を指定(例: デスクトップ)
-yt-dlp -P ~/Desktop "動画のURL"
+yt-dlp --impersonate chrome -P ~/Desktop "動画のURL"
 
-# 非公開・グループ限定動画(ログイン中のブラウザを指定)
-yt-dlp --cookies-from-browser chrome "動画のURL"
+# 非公開・グループ限定動画(ログイン中のブラウザを指定)— 実績のある組み合わせ
+yt-dlp --impersonate chrome --cookies-from-browser chrome "動画のURL"
 ```
 
 本スクリプト(`fb_download.py`)は、上記のオプションを覚えなくても使えるようにした簡易ラッパーです。
@@ -129,6 +135,8 @@ python3 fb_download.py --browser edge "URL"
 
 | 症状 | 対処法 |
 |---|---|
+| `Cannot parse data` と出る | ①非公開動画の可能性 → `--browser chrome` を付ける ②bot対策の可能性 → `pipx install "yt-dlp[default,curl-cffi]"` で偽装機能付きに入れ直す(両方併用が確実) |
+| `Impersonate target "chrome" is not available` と出る | 偽装機能なしのyt-dlpを使っている → `pipx install "yt-dlp[default,curl-cffi]"` で入れ直す(Homebrew版は非対応) |
 | `login required` / `This video is unavailable` と出る | 非公開動画の可能性 → 上記の `--browser` オプションを使う |
 | 映像と音声が別々に保存される / 結合エラー | ffmpegが未インストール → 手順1でffmpegを入れる |
 | `pip3: command not found` | Pythonが未インストール、またはPATH未設定 → Pythonを入れ直す(Windowsは「Add to PATH」にチェック) |
