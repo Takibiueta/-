@@ -4,9 +4,23 @@
 # 使い方:
 #   1. Facebookで動画のURLをコピー(⌘C)
 #   2. このファイルをダブルクリック
-#   → デスクトップに動画が保存されます
+#   → 外部SSD「CASTING」内の facebook動画 フォルダに保存されます
+#     (SSDが接続されていない場合はデスクトップに保存されます)
 
-cd "$HOME/Desktop" || exit 1
+SSD_NAME="CASTING"
+SSD_DIR="/Volumes/$SSD_NAME/facebook動画"
+
+if [ -d "/Volumes/$SSD_NAME" ]; then
+  mkdir -p "$SSD_DIR"
+  SAVE_DIR="$SSD_DIR"
+  echo "保存先: 外部SSD「$SSD_NAME」の facebook動画 フォルダ"
+else
+  SAVE_DIR="$HOME/Desktop"
+  echo "外部SSD「$SSD_NAME」が見つからないため、デスクトップに保存します。"
+  echo "(SSDに保存したい場合は接続してからやり直してください)"
+fi
+
+cd "$SAVE_DIR" || exit 1
 
 # yt-dlp の場所を探す(pipx版を優先)
 if [ -x "$HOME/.local/bin/yt-dlp" ]; then
@@ -43,13 +57,13 @@ if [ -z "$URL" ]; then
 fi
 
 echo ""
-echo "=== ダウンロード開始(保存先: デスクトップ)==="
-"$YTDLP" --impersonate chrome --cookies-from-browser chrome -P "$HOME/Desktop" "$URL"
+echo "=== ダウンロード開始(保存先: $SAVE_DIR)==="
+"$YTDLP" --impersonate chrome --cookies-from-browser chrome -P "$SAVE_DIR" "$URL"
 STATUS=$?
 
 echo ""
 if [ $STATUS -eq 0 ]; then
-  echo "✅ 完了! デスクトップに動画が保存されました。"
+  echo "✅ 完了! $SAVE_DIR に動画が保存されました。"
 else
   echo "❌ 失敗しました。上のエラーメッセージを確認してください。"
   echo "   ヒント: Chromeを完全に終了(⌘Q)してから再実行すると直ることがあります。"
