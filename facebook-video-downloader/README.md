@@ -145,11 +145,25 @@ python3 fb_download.py --browser edge "URL"
 
 ---
 
-## 6. ファイル構成
+## 6. Mac用: ダブルクリックでダウンロード(コマンド入力不要)
+
+`mac/FB動画ダウンロード.command` をデスクトップに置いておくと、コマンドを打たずに使えます。
+
+1. Facebookで動画のURLをコピー(⌘C)
+2. デスクトップの「FB動画ダウンロード.command」をダブルクリック
+3. ターミナルが開いてダウンロードが始まり、デスクトップに保存される
+
+クリップボードにFacebookのURLが入っていれば自動で使い、なければ入力欄が出ます。
+
+> 初回のみ: Finderで右クリック→「開く」で起動許可が必要な場合があります。
+> また、`chmod +x FB動画ダウンロード.command` で実行権限を付けてください。
+
+## 7. ファイル構成
 
 ```
 facebook-video-downloader/
-├── fb_download.py    # ダウンロードスクリプト本体
-├── README.md         # このファイル
-└── requirements.txt  # 必要なPythonライブラリ一覧
+├── fb_download.py                 # ダウンロードスクリプト本体
+├── mac/FB動画ダウンロード.command  # Mac用ダブルクリック起動ファイル
+├── README.md                      # このファイル
+└── requirements.txt               # 必要なPythonライブラリ一覧
 ```
