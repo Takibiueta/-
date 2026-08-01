@@ -4,16 +4,16 @@
 # 使い方:
 #   1. Facebookで動画のURLをコピー(⌘C)
 #   2. このファイルをダブルクリック
-#   → 外部SSD「CASTING」内の facebook動画 フォルダに保存されます
+#   → 外部SSD「CASTING」内の Facebook フォルダに保存されます
 #     (SSDが接続されていない場合はデスクトップに保存されます)
 
 SSD_NAME="CASTING"
-SSD_DIR="/Volumes/$SSD_NAME/facebook動画"
+SSD_DIR="/Volumes/$SSD_NAME/Facebook"
 
 if [ -d "/Volumes/$SSD_NAME" ]; then
   mkdir -p "$SSD_DIR"
   SAVE_DIR="$SSD_DIR"
-  echo "保存先: 外部SSD「$SSD_NAME」の facebook動画 フォルダ"
+  echo "保存先: 外部SSD「$SSD_NAME」の Facebook フォルダ"
 else
   SAVE_DIR="$HOME/Desktop"
   echo "外部SSD「$SSD_NAME」が見つからないため、デスクトップに保存します。"
